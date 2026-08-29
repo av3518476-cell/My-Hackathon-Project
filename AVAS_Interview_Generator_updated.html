@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AVAS — Interview Question Generator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:"DM Sans",sans-serif;color:#f4f1ff;min-height:100vh;overflow-x:hidden;
+  background:
+   radial-gradient(circle at 0% 38%,rgba(89,54,220,.28),transparent 24%),
+   radial-gradient(circle at 100% 45%,rgba(31,103,220,.23),transparent 25%),
+   radial-gradient(circle at 78% 18%,rgba(190,40,210,.12),transparent 18%),
+   #050816;
+}
+body:before{
+ content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;
+ background-image:radial-gradient(rgba(255,255,255,.55) 1px,transparent 1px);
+ background-size:90px 90px;opacity:.25
+}
+.container{width:min(1250px,calc(100% - 40px));margin:auto}
+nav{
+ position:sticky;top:18px;z-index:20;margin:26px auto 0;width:min(1250px,calc(100% - 40px));
+ height:80px;padding:0 28px;display:flex;align-items:center;justify-content:space-between;
+ background:rgba(12,14,34,.8);border:1px solid rgba(188,126,255,.32);border-radius:23px;
+ backdrop-filter:blur(18px);box-shadow:0 18px 60px rgba(0,0,0,.35)
+}
+.brand{display:flex;align-items:center;gap:13px;font:700 34px "Space Grotesk";letter-spacing:1px}
+.brand-mark{width:52px;height:52px;border-radius:12px;display:grid;place-items:center;
+ background:linear-gradient(135deg,#6f49e8,#a72bc9);box-shadow:0 0 30px rgba(151,74,255,.5);font-size:27px}
+.navlinks{display:flex;gap:38px;color:#ddd9ea}
+.navlinks a{text-decoration:none;color:inherit;font-size:15px}
+.navlinks a:hover{color:#d99aff}
+.get-started,.generate-btn{
+ border:0;color:white;font-weight:700;cursor:pointer;border-radius:13px;
+ background:linear-gradient(100deg,#6046ee,#e432bb);box-shadow:0 10px 25px rgba(147,58,232,.25)
+}
+.get-started{padding:16px 27px}
+.hero{padding:90px 0 80px;display:grid;grid-template-columns:1.05fr .95fr;gap:65px;align-items:center}
+.badge{display:inline-flex;padding:10px 20px;border:1px solid rgba(69,213,255,.35);border-radius:999px;
+ color:#c5a3ff;background:rgba(15,29,48,.75);font-weight:700;margin-bottom:30px}
+h1{font:700 clamp(60px,8vw,120px)/.95 "Space Grotesk";letter-spacing:-5px;margin-bottom:22px}
+h1 .avas{display:block;background:linear-gradient(100deg,#b45cff,#8067ff,#36c7ff);-webkit-background-clip:text;color:transparent}
+h1 .sub{font-size:.58em;letter-spacing:-3px;display:block;color:#f2f0f6}
+.hero p{max-width:580px;color:#c0bdca;font-size:18px;line-height:1.6}
+.perks{display:flex;gap:12px;margin:28px 0}
+.perk{flex:1;padding:18px 14px;border:1px solid rgba(143,155,210,.22);border-radius:13px;
+ background:rgba(16,21,39,.78);font-size:13px;color:#b9b6c4}
+.perk b{display:block;color:#f3efff;font-size:14px;margin-bottom:5px}
+.actions{display:flex;gap:20px}
+.generate-btn{padding:18px 32px;font-size:16px}
+.learn{padding:17px 29px;border:1px solid rgba(157,157,190,.3);border-radius:13px;background:rgba(10,14,30,.65);color:#eee;cursor:pointer}
+
+.generator-card{
+ border:1px solid transparent;border-radius:26px;padding:30px;
+ background:linear-gradient(#0b1020,#0b1020) padding-box,linear-gradient(135deg,#b958ff,#28c7e8) border-box;
+ box-shadow:0 25px 90px rgba(0,0,0,.42)
+}
+.card-brand{font:700 24px "Space Grotesk";padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,.1)}
+.card-title{text-align:center;font:700 25px "Space Grotesk";margin:25px 0 8px}
+.card-sub{text-align:center;color:#a9a8b5;font-size:14px;margin-bottom:22px}
+.field{margin-bottom:15px}
+label{display:block;margin-bottom:8px;color:#ddd9e9;font-size:14px}
+select,input,textarea{
+ width:100%;padding:15px 17px;border-radius:12px;border:1px solid rgba(154,164,200,.22);
+ background:#151a2a;color:#eee;font:inherit;outline:none
+}
+textarea{height:115px;resize:vertical}
+select:focus,input:focus,textarea:focus{border-color:#a45cff;box-shadow:0 0 0 3px rgba(164,92,255,.12)}
+.card .generate-btn{width:100%;margin-top:6px}
+.result{display:none;margin-top:20px;padding:16px;border:1px solid rgba(74,225,155,.25);border-radius:14px;background:rgba(24,87,67,.2)}
+.result h3{color:#7ff0b7;margin-bottom:9px}
+.result li{color:#d7d4df;margin:8px 0;line-height:1.4}
+
+.team-section{
+ margin:0 auto 45px;width:min(1250px,calc(100% - 40px));padding:30px;
+ display:grid;grid-template-columns:1fr 1.6fr;gap:35px;align-items:center;
+ border:1px solid rgba(203,104,255,.5);border-radius:28px;background:rgba(12,14,33,.82);
+ box-shadow:0 0 50px rgba(146,52,230,.12)
+}
+.empire{text-align:center;border-right:1px solid rgba(255,255,255,.15);padding:25px}
+.crown{font-size:60px;filter:drop-shadow(0 0 15px #9d56ff)}
+.empire h2{font:700 29px "Space Grotesk";color:#bd85ff;margin:8px 0}
+.empire p{color:#c0bdca;line-height:1.6}
+.members h2{font:700 24px "Space Grotesk";margin-bottom:22px;color:#d4b6ff}
+.member-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.member{text-align:center;padding:12px}
+.avatar{width:74px;height:74px;margin:0 auto 12px;border:2px solid #b968f2;border-radius:50%;display:grid;place-items:center;
+ background:linear-gradient(145deg,#28213d,#111827);font-size:32px;box-shadow:0 0 18px rgba(192,84,255,.2)}
+.member b{font-size:16px;color:#eee}
+footer{text-align:center;color:#9e9aaa;padding:10px 20px 35px;font-size:14px}
+@media(max-width:900px){
+ .navlinks{display:none}.hero{grid-template-columns:1fr;gap:35px;padding-top:65px}
+ .team-section{grid-template-columns:1fr}.empire{border-right:0;border-bottom:1px solid rgba(255,255,255,.15)}
+}
+@media(max-width:600px){
+ nav{height:68px;padding:0 16px}.brand{font-size:27px}.brand-mark{width:43px;height:43px}
+ .get-started{padding:12px 15px;font-size:13px}.container,.team-section{width:min(100% - 24px,1250px)}
+ h1{font-size:68px}.perks{flex-direction:column}.actions{flex-direction:column}.member-row{grid-template-columns:repeat(2,1fr)}
+ .hero{padding-bottom:50px}.generator-card{padding:20px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="brand"><div class="brand-mark">♛</div>AVAS</div>
+  <div class="navlinks">
+    <a href="#home">Home</a><a href="#generator">Generator</a><a href="#team">Team</a>
+  </div>
+  <button class="get-started" onclick="document.getElementById('generator').scrollIntoView({behavior:'smooth'})">Get Started 🚀</button>
+</nav>
+
+<main id="home" class="container">
+  <section class="hero">
+    <div>
+      <div class="badge">✦ AI-POWERED INTERVIEW PREP</div>
+      <h1><span class="avas">AVAS</span><span class="sub">Interview Question<br>Generator</span></h1>
+      <p>Generate role-based interview questions instantly with AI. Practice smarter, get better, and prepare with confidence.</p>
+      <div class="perks">
+        <div class="perk">⚡ <b>AI Powered</b>Smart & Accurate</div>
+        <div class="perk">🎯 <b>Role Based</b>Tailored Questions</div>
+        <div class="perk">🛡️ <b>Instant Results</b>Ready in Seconds</div>
+      </div>
+      <div class="actions">
+        <button class="generate-btn" onclick="document.getElementById('generator').scrollIntoView({behavior:'smooth'})">Start Generating ✨</button>
+        <button class="learn" onclick="document.getElementById('team').scrollIntoView({behavior:'smooth'})">◉ Meet the Team</button>
+      </div>
+    </div>
+
+    <div id="generator" class="generator-card">
+      <div class="card-brand">AVAS</div>
+      <div class="card-title">✦ Generate Questions</div>
+      <div class="card-sub">Customize and generate interview questions for any role</div>
+
+      <div class="field"><label>Job Role</label><input id="role" value="Frontend Developer"></div>
+      <div class="field"><label>Experience Level</label>
+        <select id="level"><option>Fresher</option><option selected>2-4 Years</option><option>5+ Years</option></select>
+      </div>
+      <div class="field"><label>Number of Questions</label>
+        <select id="count"><option>5</option><option selected>10</option><option>15</option></select>
+      </div>
+      <div class="field"><label>Question Type</label>
+        <select id="type"><option>Technical</option><option>Behavioral</option><option>Situational</option><option>Mixed</option></select>
+      </div>
+      <button class="generate-btn" onclick="generateQuestions()">✦ Generate Questions</button>
+
+      <div id="result" class="result">
+        <h3>✓ Questions Generated Successfully!</h3>
+        <ol id="questionList"></ol>
+      </div>
+    </div>
+  </section>
+</main>
+
+<section id="team" class="team-section">
+  <div class="empire">
+    <div class="crown">♛</div>
+    <h2>AVAS EMPIRE</h2>
+    <p>Building intelligent solutions for<br>a smarter tomorrow.</p>
+  </div>
+  <div class="members">
+    <h2>👥 Team Members</h2>
+    <div class="member-row">
+      <div class="member"><div class="avatar">👤</div><b>Ashish</b></div>
+      <div class="member"><div class="avatar">👤</div><b>Vinayak</b></div>
+      <div class="member"><div class="avatar">👤</div><b>Ayush</b></div>
+      <div class="member"><div class="avatar">👤</div><b>Sarthak</b></div>
+    </div>
+  </div>
+</section>
+
+<footer>© 2026 <b>AVAS Empire</b> · All rights reserved. 💜</footer>
+
+<script>
+const templates = {
+  Technical: [
+    role => `What are the most important technical skills required for a ${role}?`,
+    role => `How would you solve a challenging real-world problem as a ${role}?`,
+    role => `Explain your approach to debugging a complex issue in a ${role} project.`,
+    role => `How do you ensure performance and scalability in your work as a ${role}?`
+  ],
+  Behavioral: [
+    role => `Tell us about a difficult team situation you handled as a ${role}.`,
+    role => `Describe a project where you made a mistake and what you learned.`,
+    role => `How do you handle disagreement with teammates or managers?`
+  ],
+  Situational: [
+    role => `Imagine an urgent production issue appears. What would you do first?`,
+    role => `How would you respond if a project deadline suddenly moved earlier?`,
+    role => `What would you do if you had to learn a new technology very quickly?`
+  ]
+};
+
+function generateQuestions(){
+  const role = document.getElementById('role').value.trim() || 'Software Developer';
+  const type = document.getElementById('type').value;
+  const count = Number(document.getElementById('count').value);
+  const level = document.getElementById('level').value;
+  const categories = type === 'Mixed' ? ['Technical','Behavioral','Situational'] : [type];
+  const questions = [];
+  for(let i=0;i<count;i++){
+    const category = categories[i % categories.length];
+    const list = templates[category];
+    questions.push(`${category}: ${list[i % list.length](role)} (${level} level)`);
+  }
+  document.getElementById('questionList').innerHTML = questions.map(q=>`<li>${q}</li>`).join('');
+  document.getElementById('result').style.display='block';
+}
+</script>
+</body>
+</html>
